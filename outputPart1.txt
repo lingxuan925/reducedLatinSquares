@@ -1,0 +1,58 @@
+n=7
+16942080
+Search Time: 3603453 milliseconds
+
+Enter the order of latin squares to compute: 14
+
+Total number of inequivalent latin squares of order 14: 0
+Number of partial solutions at level 14:  479001600                     
+Number of partial solutions at level 13:  16019531                      
+Number of partial solutions at level 12:  5919760                       
+Number of partial solutions at level 11:  2527746                       
+Number of partial solutions at level 10:  747072                        
+Number of partial solutions at level 9:   318433                        
+Number of partial solutions at level 8:   125808                        
+Number of partial solutions at level 7:   43478                         
+Number of partial solutions at level 6:   7360                          
+Number of partial solutions at level 5:   1280                          
+Number of partial solutions at level 4:   238                           
+Number of partial solutions at level 3:   42                            
+Number of partial solutions at level 2:   1                             
+Number of partial solutions at level 1:   0                             
+Search Time: 151518 milliseconds
+
+Enter the order of latin squares to compute: 15
+
+  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+  2 15 14 13 12 11 10  1  4  8  7  9  6  3  5
+  3 14 15 12 13 10 11  2  1  7  5  6  4  8  9
+  4 13 12 15 14  9  5 11 10  6  8  2  3  7  1
+  5 12 13 14 15  8  9 10  3  4  6  7 11  1  2
+  6 11 10  9  8 15 14 13 12  5  4  1  7  2  3
+  7 10 11  8  9 14 15 12 13  3  2  5  1  6  4
+  8  9  7 11 10 13 12 15 14  2  1  3  5  4  6
+  9  8  6 10 11 12 13 14 15  1  3  4  2  5  7
+ 10  7  9  6  3  4  1  5  2 15 13 14 12 11  8
+ 11  6  8  7  1  3  2  4  5 14 15 13 10  9 12
+ 12  5  4  1  7  2  3  9  6 13 14 15  8 10 11
+ 13  4  5  2  6  1  8  3  7 12  9 11 14 15 10
+ 14  3  1  5  2  7  4  6 11  9 10  8 15 12 13
+ 15  1  2  3  4  5  6  7  8 11 12 10  9 13 14
+
+Total number of inequivalent latin squares of order 15: 1
+Number of partial solutions at level 15:  6227020800                    
+Number of partial solutions at level 14:  190899411                     
+Number of partial solutions at level 13:  69461952                      
+Number of partial solutions at level 12:  30578628                      
+Number of partial solutions at level 11:  9156672                       
+Number of partial solutions at level 10:  2856572                       
+Number of partial solutions at level 9:   1677760                       
+Number of partial solutions at level 8:   353232                        
+Number of partial solutions at level 7:   122352                        
+Number of partial solutions at level 6:   22433                         
+Number of partial solutions at level 5:   5760                          
+Number of partial solutions at level 4:   460                           
+Number of partial solutions at level 3:   48                            
+Number of partial solutions at level 2:   4                             
+Number of partial solutions at level 1:   1                             
+Search Time: 2182126 milliseconds
