@@ -1,22 +1,22 @@
-package latinsquares;
-
-import java.math.BigInteger;
-
+package latinsquareestimation;
 /*
 * Toby (Lingxuan) Chang
 * 5942636
 * March 1st, 2018
 * COSC 4p03 Assignment #2 backtracking latin squares
-* Solver Class - dfs to find all possible solutions of a Latin Square of order n
+* Solver Class - dfs to find all possible solutions to a Latin square of order n
 * Note that in my program, my i's generally refer to row and j's refer to column
 */
-
 public class Solver {
-    private BigInteger solutions; //for n greater than 8 in case
-    private final BigInteger four = new BigInteger("4");
+    //contains count of partial solutions at each level
+    private final long[] partialSolutions;
+    /*stores the chosen configuration of the latin square at that level which 
+    is the one where to go down a level from*/
+    private int[][] chosenNode;
     
     public Solver(int n) {
-        solutions = new BigInteger("0");
+        partialSolutions = new long[n];
+        chosenNode = new int[n][n]; 
     }
     
     /**
@@ -57,36 +57,32 @@ public class Solver {
         for (int j=0; j<order; j++) if (latinsqu[cur_row][j] == val) return true;
         return false;
     }
-  
+    
     /**
-     * the depth first search used to find all possible solution to current
-     Latin square configuration
+     * after getting the random number which is between 1 and the total count
+     of partial solutions at that level, do the dfs again to find the node in
+     which to go down a level from
      * @param latinsqu - the Latin square trying to solve
      * @param atCol - current column index of the recursion
      * @param order - order of Latin square
-     * @param val - value to be inserted at this level
+     * @param val - value to be inserted at this level (indication of level)
+     * @param chosen - the randomized number which is between 1 and the total count
+     of partial solutions at that level
      */
-    public void dfs(int[][] latinsqu, int atCol, int order, int val) { //never going to add to first column because of unique property
+    public void dfsGetChosenNode(int[][] latinsqu, int atCol, int order, int val, long chosen) { //never going to add to first column because of unique property
         if (!isSameCol(latinsqu, atCol, order, val)) {
             for (int i=0; i<order; i++) { //i is row
                 if (!isSameRow(latinsqu, i, order, val) && isNotOccupied(latinsqu, i, atCol)) { //need to also check for non-empty subsquare
                     latinsqu[i][atCol] = val;
                     if (atCol == order-1) { //at last column (inserted a value at the last column)
                         //a partial solution has been found at this point
-                        if (val-1 != 0) { //finished with last level, need to backtrack now if equal to 0, otherwise go in the if statement and dfs to next level
-                            fillValAtCorrespondingFirstRowAndColIndex(latinsqu, val-1);
-                            dfs(latinsqu, 0, order, val-1);
-                            clearSubSquare(latinsqu, i, atCol); //after backtrack, clear subsquare   
-                        }
-                        else {
-                            //clears the value from the last sub square that was inserted when a solution was found before backtracking occurs
-                            solutions = solutions.add(BigInteger.ONE);
-                            if (solutions.compareTo(four) <= 0) printSquare(latinsqu);
-                            clearSubSquare(latinsqu, i, atCol); 
-                        }
+                        partialSolutions[val-1] += 1;
+                        //found chosen node configuration
+                        if (partialSolutions[val-1] == chosen) chosenNode = Helpers.cloneLatinSqu(latinsqu);
+                        clearSubSquare(latinsqu, i, atCol); //need to clear subsquare last inserted before solution
                     }
                     else {
-                        dfs(latinsqu, atCol+1, order, val);
+                        dfsGetChosenNode(latinsqu, atCol+1, order, val, chosen);
                         clearSubSquare(latinsqu, i, atCol); //after backtrack, clear subsquare
                     }
                 }
@@ -95,13 +91,47 @@ public class Solver {
         else { 
             if (atCol == order-1) { //at last column (no insertion of value, value already exist in last column)
                 //a partial solution has been found at this point
-                if (val-1 != 0) { //finished with last level, need to backtrack now if equal to 0, otherwise go in the if statement and dfs to next level
-                    fillValAtCorrespondingFirstRowAndColIndex(latinsqu, val-1);
-                    dfs(latinsqu, 0, order, val-1);
-                }
+                partialSolutions[val-1] += 1;
+                if (partialSolutions[val-1] == chosen) chosenNode = Helpers.cloneLatinSqu(latinsqu);
             }
             else { //
-                dfs(latinsqu, atCol+1, order, val); //move to next col because current col already has the value
+                dfsGetChosenNode(latinsqu, atCol+1, order, val, chosen); //move to next col because current col already has the value
+            }
+        }
+    }
+    
+    /**
+     * the depth first search used to count the number of partial solutions at
+     the specified level
+     * @param latinsqu - the Latin square trying to solve
+     * @param atCol - current column index of the recursion
+     * @param order - order of Latin square
+     * @param val - value to be inserted at this level (indication of level)
+     */
+    public void dfsCnt(int[][] latinsqu, int atCol, int order, int val) { //never going to add to first column because of unique property
+        if (!isSameCol(latinsqu, atCol, order, val)) {
+            for (int i=0; i<order; i++) { //i is row
+                if (!isSameRow(latinsqu, i, order, val) && isNotOccupied(latinsqu, i, atCol)) { //need to also check for non-empty subsquare
+                    latinsqu[i][atCol] = val;
+                    if (atCol == order-1) { //at last column (inserted a value at the last column)
+                        //a partial solution has been found at this point
+                        partialSolutions[val-1] += 1;
+                        clearSubSquare(latinsqu, i, atCol); //need to clear subsquare last inserted before solution 
+                    }
+                    else {
+                        dfsCnt(latinsqu, atCol+1, order, val);
+                        clearSubSquare(latinsqu, i, atCol); //after backtrack, clear subsquare
+                    }
+                }
+            }
+        }
+        else { 
+            if (atCol == order-1) { //at last column (no insertion of value, value already exist in last column)
+                //a partial solution has been found at this point
+                partialSolutions[val-1] += 1;
+            } 
+            else { //
+                dfsCnt(latinsqu, atCol+1, order, val); //move to next col because current col already has the value
             }
         }
     }
@@ -127,21 +157,14 @@ public class Solver {
         latinsqu[0][val-1] = val;
         latinsqu[val-1][0] = val;
     }
-    
-    /**
-     * Prints a Latin square, used for debugging
-     * @param latinsqu - a Latin square
-     */
-    public void printSquare(int[][] latinsqu) {
-        System.out.println();
-        for (int i=0; i<latinsqu.length; i++) {
-            for (int j=0; j<latinsqu[i].length; j++) System.out.print(String.format("%3d", latinsqu[i][j]));
-            System.out.println();
-        }            
+
+    //returns the array containing the count of partial solutions at each level
+    public long[] getPartialSolutions() {
+        return partialSolutions;
     }
     
-    //return total count of solutions for Latin square of order n
-    public BigInteger getSolutionsCnt() {
-        return solutions;
+    //returns the configuration of the latin square based on the chosen node at that level
+    public int[][] getChosenNode() {
+        return chosenNode;
     }
 }
